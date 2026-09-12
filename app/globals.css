@@ -1,26 +1,125 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  CivicConnect AI — design tokens.
+
+  The organising rule: the citizen surface is light, the agent surface is dark.
+  Anything the AI is doing or has done is rendered on --agent with --marking
+  (road-marking yellow) as its only accent. Light means people, dark means machine.
+*/
+
+@theme {
+  --color-ground: #edf0f3;
+  --color-surface: #ffffff;
+  --color-ink: #16222e;
+  --color-muted: #5b6b7a;
+  --color-rule: #dce3e9;
+  --color-action: #0b5fd0;
+  --color-action-ink: #084aa4;
+
+  --color-agent: #14202b;
+  --color-agent-deep: #0e1720;
+  --color-agent-rule: #2a3a49;
+  --color-agent-muted: #8fa3b5;
+  --color-marking: #ffc61a;
+
+  /* Sign colours. Functional only — never decorative. */
+  --color-sev-critical: #a81919;
+  --color-sev-high: #d92b2b;
+  --color-sev-medium: #e8a33d;
+  --color-sev-low: #1f9d6b;
+  --color-resolved: #1f9d6b;
+  --color-unknown: #5b6b7a;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Tiered radii — hierarchy, not one value everywhere. */
+  --radius-card: 12px;
+  --radius-chip: 6px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    background: var(--color-ground);
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.02em;
+  }
+
+  /* Visible keyboard focus everywhere, on both surfaces. */
+  :focus-visible {
+    outline: 2px solid var(--color-action);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  .on-agent :focus-visible {
+    outline-color: var(--color-marking);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .tracking-tight-display {
+    letter-spacing: -0.025em;
+  }
+
+  /* The one orchestrated motion in the product: an agent step landing as the
+     stream emits it. Everything else is static. */
+  @keyframes step-land {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .animate-step-land {
+    animation: step-land 260ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+
+  @keyframes pulse-ring {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .animate-pulse-ring {
+    animation: pulse-ring 1.4s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-step-land,
+    .animate-pulse-ring {
+      animation: none;
+    }
+  }
+}
+
+/* Leaflet renders its own controls; keep them on-palette. */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: #dfe5ea;
+}
+
+.leaflet-control-attribution {
+  font-size: 10px;
+  color: var(--color-muted);
 }

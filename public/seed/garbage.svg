@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Uncollected waste piled beside a wall">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cdc6b8"/>
+      <stop offset="1" stop-color="#a79f90"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#wall)"/>
+  <rect y="330" width="800" height="170" fill="#6f7681"/>
+  <rect y="330" width="800" height="12" fill="#858c96"/>
+  <g stroke="#9a9184" stroke-width="3" opacity="0.6">
+    <path d="M0 120 H800"/><path d="M0 220 H800"/>
+    <path d="M200 20 V330"/><path d="M520 20 V330"/>
+  </g>
+  <ellipse cx="430" cy="400" rx="280" ry="66" fill="#5d646e"/>
+  <g>
+    <path d="M210 400 q40-92 128-96 t150 44 q56 10 70 52z" fill="#4b5a52"/>
+    <path d="M250 398 q34-64 96-70 t112 36 q42 8 54 34z" fill="#5e7065"/>
+    <rect x="300" y="322" width="66" height="52" rx="6" fill="#2f6f8f" transform="rotate(-12 333 348)"/>
+    <rect x="392" y="334" width="52" height="44" rx="5" fill="#b8683f" transform="rotate(9 418 356)"/>
+    <circle cx="476" cy="360" r="24" fill="#8a9a6d"/>
+    <rect x="500" y="348" width="60" height="38" rx="4" fill="#6d5f8a" transform="rotate(-6 530 367)"/>
+    <path d="M268 372 q22-26 48-14" stroke="#dfe4e8" stroke-width="6" fill="none"/>
+    <path d="M430 330 q20-30 48-18" stroke="#e3e7ea" stroke-width="5" fill="none"/>
+  </g>
+  <g fill="#c9ceD3" opacity="0.85">
+    <ellipse cx="180" cy="428" rx="26" ry="9"/>
+    <ellipse cx="628" cy="436" rx="34" ry="10"/>
+  </g>
+  <rect x="596" y="236" width="96" height="118" rx="8" fill="#3c6b4f"/>
+  <rect x="588" y="222" width="112" height="20" rx="8" fill="#2f5741"/>
+</svg>

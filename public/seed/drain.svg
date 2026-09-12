@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Blocked roadside drain with water backing up">
+  <defs>
+    <linearGradient id="d-road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#767f88"/>
+      <stop offset="1" stop-color="#4d565e"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6d7f62"/>
+      <stop offset="1" stop-color="#46573f"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="#9fb0bd"/>
+  <rect y="130" width="800" height="370" fill="url(#d-road)"/>
+  <rect y="130" width="800" height="46" fill="#8b959e"/>
+  <rect y="176" width="800" height="10" fill="#aab4bc"/>
+  <path d="M0 250 H800 V500 H0Z" fill="#59626b"/>
+  <ellipse cx="400" cy="392" rx="330" ry="92" fill="url(#water)"/>
+  <ellipse cx="400" cy="382" rx="300" ry="80" fill="#5d7053" opacity="0.9"/>
+  <g fill="#8fa07f" opacity="0.6">
+    <ellipse cx="300" cy="372" rx="70" ry="16"/>
+    <ellipse cx="510" cy="400" rx="90" ry="18"/>
+  </g>
+  <g>
+    <rect x="560" y="286" width="180" height="70" rx="6" fill="#2f383f"/>
+    <g fill="#1a2127">
+      <rect x="576" y="300" width="148" height="9" rx="3"/>
+      <rect x="576" y="318" width="148" height="9" rx="3"/>
+      <rect x="576" y="336" width="148" height="9" rx="3"/>
+    </g>
+    <path d="M566 296 q52-16 96 4 t70 6" fill="none" stroke="#6f7f5e" stroke-width="12" stroke-linecap="round"/>
+    <path d="M590 330 q40 12 84-4" fill="none" stroke="#b9c0a4" stroke-width="7" stroke-linecap="round"/>
+    <rect x="604" y="272" width="48" height="26" rx="4" fill="#3f6d84" transform="rotate(-10 628 285)"/>
+  </g>
+  <g fill="#c7d0d6" opacity="0.5">
+    <circle cx="214" cy="330" r="6"/><circle cx="660" cy="420" r="8"/>
+  </g>
+</svg>

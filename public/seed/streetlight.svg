@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Unlit streetlight over a dark road at night">
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#101b2a"/>
+      <stop offset="0.7" stop-color="#1b2838"/>
+      <stop offset="1" stop-color="#121a24"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffc61a" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ffc61a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#night)"/>
+  <rect y="366" width="800" height="134" fill="#0d141d"/>
+  <g opacity="0.85" fill="#dfe6ec">
+    <circle cx="120" cy="70" r="2"/><circle cx="238" cy="46" r="1.6"/>
+    <circle cx="360" cy="92" r="1.8"/><circle cx="640" cy="58" r="2"/>
+    <circle cx="712" cy="120" r="1.5"/>
+  </g>
+  <g stroke="#39434f" stroke-width="10" fill="none">
+    <path d="M540 366 V120 q0-30 -30-30 H436"/>
+  </g>
+  <rect x="392" y="76" width="52" height="26" rx="6" fill="#2b333d"/>
+  <rect x="398" y="100" width="40" height="8" rx="3" fill="#141b23"/>
+  <rect x="516" y="366" width="48" height="14" rx="4" fill="#2b333d"/>
+  <ellipse cx="180" cy="392" rx="120" ry="26" fill="url(#glow)"/>
+  <g stroke="#3a4654" stroke-width="10" fill="none" opacity="0.75">
+    <path d="M180 366 V160 q0-26 26-26 H286"/>
+  </g>
+  <rect x="238" y="122" width="48" height="24" rx="6" fill="#4a5665"/>
+  <ellipse cx="262" cy="152" rx="30" ry="12" fill="#ffc61a" opacity="0.5"/>
+  <g stroke="#2a3441" stroke-width="4" opacity="0.9">
+    <path d="M0 430 H800"/>
+  </g>
+  <g fill="#8b949e" opacity="0.35">
+    <rect x="60" y="240" width="70" height="126" rx="4"/>
+    <rect x="660" y="210" width="90" height="156" rx="4"/>
+  </g>
+</svg>

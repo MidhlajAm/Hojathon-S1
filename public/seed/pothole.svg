@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Road surface with a large pothole">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9c8d4"/>
+      <stop offset="1" stop-color="#8fa2b1"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6d7780"/>
+      <stop offset="1" stop-color="#464f57"/>
+    </linearGradient>
+    <radialGradient id="hole" cx="0.5" cy="0.45" r="0.6">
+      <stop offset="0" stop-color="#0d1319"/>
+      <stop offset="0.75" stop-color="#1d262f"/>
+      <stop offset="1" stop-color="#333c45"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#sky)"/>
+  <rect y="150" width="800" height="350" fill="url(#road)"/>
+  <path d="M0 150 H800 V172 H0Z" fill="#5d6771"/>
+  <rect x="120" y="118" width="14" height="34" fill="#3c454e"/>
+  <circle cx="127" cy="110" r="16" fill="#586470"/>
+  <g opacity="0.5" fill="#e6ebef">
+    <rect x="330" y="196" width="90" height="10" rx="2"/>
+    <rect x="330" y="252" width="90" height="10" rx="2"/>
+    <rect x="330" y="330" width="90" height="12" rx="2"/>
+  </g>
+  <ellipse cx="470" cy="392" rx="182" ry="76" fill="url(#hole)"/>
+  <ellipse cx="470" cy="380" rx="182" ry="74" fill="#2b343d"/>
+  <ellipse cx="470" cy="386" rx="150" ry="56" fill="#141b22"/>
+  <ellipse cx="440" cy="392" rx="78" ry="26" fill="#2f4451" opacity="0.85"/>
+  <path d="M288 372 q60-34 132-30 t124 34" fill="none" stroke="#7b858e" stroke-width="5" opacity="0.6"/>
+  <g fill="#59636c" opacity="0.7">
+    <circle cx="250" cy="440" r="7"/>
+    <circle cx="700" cy="420" r="5"/>
+    <circle cx="180" cy="330" r="4"/>
+  </g>
+</svg>
