@@ -39,7 +39,7 @@ Fill this in as soon as your team is formed.
 3. Rushda
 4. Aber
 
-**Project Name:**
+**Project Name:** CivicConnect AI
 
 > Teams may have **1, 2, or 3 members**.
 
@@ -51,46 +51,75 @@ Replace the placeholders below with your own project's details — this is what 
 
 ### Project Name
 
+CivicConnect AI
+
 ### Team
+
+Nexaris (Shibin Up, Midhlaj AM, Rushda, Aber)
 
 ### Problem Statement
 
-What problem are you solving, and why does it call for an agent rather than a static script or a plain UI?
+Citizens frequently notice civic issues like severe potholes, broken streetlights, or uncollected garbage but rarely report them. The reporting process is often fragmented, requires navigating complex government websites to find the right authority, and involves filling out tedious forms. This creates a massive disconnect between issues on the ground and the authorities responsible for resolving them. 
+
+This problem calls for an **agent** rather than a static form because the system needs to intelligently reason over unstructured data (photos and locations), figure out the jurisdiction, draft a formal complaint based on context, and execute the submission on behalf of the user. An agent handles the complexity so the citizen doesn't have to.
 
 ### Proposed Solution
 
-Explain your solution and how your agent approaches the problem.
+**CivicConnect AI** is an Agentic AI-powered civic issue platform that acts as an intermediary between citizens and authorities. A user simply snaps a photo of a civic issue and their location. Our AI agent (powered by Gemini) analyzes the image, understands the problem and its severity, determines the appropriate local authority, and automatically prepares a formal complaint. Once the user approves, the agent submits the complaint and tracks its status. The platform also includes a Reddit-style feed and an interactive map, fostering a community around civic engagement.
 
 ### Key Features
 
-* Feature 1
-* Feature 2
-* Feature 3
+* **Agentic Issue Reporting:** Upload a photo, and the AI agent automatically identifies the issue, assesses severity, and determines the responsible authority.
+* **Automated Complaint Generation & Submission:** The agent drafts formal complaints and acts on the user's behalf to submit them through appropriate channels.
+* **Interactive Civic Map:** A geographical view to discover and track civic issues reported in your neighborhood.
+* **Community Feed:** A Reddit-style platform where citizens can view, upvote, discuss trending civic issues, and discover local civic events.
 
 ### Technology Stack
 
-Describe whatever stack you chose. None of the categories below are required — leave out or add rows as needed.
-
 | Category | Technology |
 | -------- | ---------- |
-| Frontend |            |
-| Backend  |            |
-| Database |            |
-| AI/ML    |            |
-| APIs     |            |
-| Other    |            |
+| Frontend | Next.js, React, Tailwind CSS |
+| Backend  | Next.js API Routes / Server Actions |
+| Database | MongoDB |
+| AI/ML    | Google AI Studio, Gemini API (@google/genai) |
+| APIs     | Nodemailer (Email Integration), Leaflet (Maps) |
 
 ### How It Works
 
-Explain your agent's architecture: what tools or APIs it can call, how it plans and decides what to do next, and what a full run through your system looks like. Add diagrams if they help.
+The platform revolves around a Gemini-powered Agentic workflow seamlessly integrated with a Next.js application:
+1. **Understand:** A citizen uploads a photo and location. The Gemini Vision model analyzes the image to identify the issue (e.g., "Severe Pothole") and assess its severity.
+2. **Decide:** Based on the identified issue and geographic location, the agent determines the appropriate civic authority (e.g., "Local Road Authority").
+3. **Use Tools:** The agent utilizes internal tools (Next.js server actions) to draft a formal complaint email to the identified authority.
+4. **Take Action:** After presenting the drafted complaint for user confirmation, the agent uses Nodemailer to officially submit the complaint. 
+5. **Remember & Display:** The Next.js backend stores the complaint in MongoDB and updates the platform's community feed and Leaflet-powered map, allowing users to track the issue's resolution status.
 
 ### Setup & Installation
 
-Replace this section with your project's actual setup instructions.
+```bash
+# Clone your fork
+git clone https://github.com/<your-username>/Hojathon-S1.git
+
+# Navigate into the project directory
+cd Hojathon-S1
+
+# Install dependencies
+npm install
+
+# Configure environment variables
+# Create a .env.local file in the root directory and add:
+GEMINI_API_KEY=your_gemini_api_key
+MONGODB_URI=your_mongodb_connection_string
+# Add any other necessary keys (e.g., for Nodemailer)
+```
 
 ### Running the Project
 
-Explain exactly how judges can run and use the project.
+```bash
+# Start the development server
+npm run dev
+```
+Open `http://localhost:3000` in your browser.
+Judges can test the platform by clicking "Report Issue", uploading a sample photo of a civic problem (like a pothole), and observing the AI agent analyze the issue, draft the complaint, and wait for confirmation before submission.
 
 ---
 
