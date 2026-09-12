@@ -1,5 +1,6 @@
 import { wait } from "./stream";
-import type { AnalyzeAgent, AnalyzeInput, AnalyzeOutput, Emit, Severity } from "./types";
+import { geminiConfig, withGemini } from "@/lib/gemini";
+import type { AnalyzeAgent, AnalyzeInput, AnalyzeOutput, Emit, IssueAnalysis, Severity } from "./types";
 
 /**
  * AGENT 1 — ISSUE ANALYSIS.  ← teammate implementation goes here
@@ -106,6 +107,43 @@ export const analyzeIssue: AnalyzeAgent = async (
   emit: Emit,
   signal,
 ): Promise<AnalyzeOutput> => {
+  if (geminiConfig().available) {
+    emit({ id: "read", label: "Reading the photo", status: "active" });
+    const imageResponse = await fetch(input.imageUrl, { signal });
+    if (!imageResponse.ok) {
+      throw new Error(`Could not read the uploaded image (${imageResponse.status}).`);
+    }
+    const mimeType = imageResponse.headers.get("content-type")?.split(";")[0] || "image/jpeg";
+    const imageData = Buffer.from(await imageResponse.arrayBuffer()).toString("base64");
+
+    const result = await withGemini(async (client, config) => {
+      const response = await client.models.generateContent({
+        model: config.model,
+        contents: [{
+          role: "user",
+          parts: [
+            { inlineData: { mimeType, data: imageData } },
+            {
+              text: `Analyze this civic issue photo. Return only valid JSON with this shape:
+{"isCivicIssue":true,"title":"short title","category":"road|waste|streetlight|water|drainage|other","summary":"one or two sentences","severity":"low|medium|high|critical","confidence":0.0,"tags":["tag"]}
+Reporter description: ${input.description ?? "none"}`,
+            },
+          ],
+        }],
+      });
+      if (!response.text) throw new Error("Gemini returned an empty analysis.");
+      return response.text;
+    });
+
+    const analysis = JSON.parse(result.replace(/^```json\s*|\s*```$/g, "")) as IssueAnalysis;
+    emit({ id: "read", label: "Photo read", status: "done", detail: "Image analyzed by Gemini" });
+    emit({ id: "classify", label: "Issue identified", status: "done", detail: analysis.title });
+    emit({ id: "severity", label: "Severity estimated", status: "done", detail: analysis.severity });
+    emit({ id: "location", label: "Checking the location", status: "done", detail: input.location?.label ?? "Location supplied by the reporter" });
+    emit({ id: "duplicates", label: "Looking for existing reports", status: "done", detail: "Duplicate search is not configured" });
+    return { analysis };
+  }
+
   const profile = pickProfile(input);
 
   emit({ id: "read", label: "Reading the photo", status: "active" });

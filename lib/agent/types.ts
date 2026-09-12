@@ -46,7 +46,7 @@ export interface IssueAnalysis {
   /** One or two sentences of plain-language analysis shown to the citizen. */
   summary: string;
   severity: Severity;
-  /** 0-1. Rendered as a confidence chip; values under 0.6 prompt the user to confirm. */
+  /** 0-1 confidence assigned by the analysis capability. */
   confidence: number;
   tags: string[];
 }
@@ -58,6 +58,8 @@ export interface Authority {
   email: string;
   phone?: string;
   jurisdiction: string;
+  officialEmailVerified?: boolean;
+  officialEmailSource?: string;
 }
 
 export interface DuplicateMatch {
@@ -125,8 +127,7 @@ export interface DraftInput {
 
 /**
  * Agent 2. Route the issue to the right desk, write the complaint, send it.
- * Each method is called separately so the UI can show the citizen the draft
- * and get explicit approval before `submitComplaint` ever runs.
+ * The autonomous workflow composes these capabilities without pausing.
  */
 export interface ComplaintAgent {
   findAuthority(
@@ -141,12 +142,6 @@ export interface ComplaintAgent {
     emit: Emit,
     signal?: AbortSignal,
   ): Promise<ComplaintDraft>;
-
-  submitComplaint(
-    draft: ComplaintDraft,
-    emit: Emit,
-    signal?: AbortSignal,
-  ): Promise<SubmissionResult>;
 }
 
 /** Frames the SSE routes put on the wire. */

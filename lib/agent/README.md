@@ -41,15 +41,12 @@ visible failure.
 
 Honour the `AbortSignal`; the citizen can navigate away mid-run.
 
-## The approval boundary
+## Autonomous workflow
 
-`findAuthority` → `draftComplaint` run first and stop. The citizen reads the draft
-and presses **Confirm & submit** before `submitComplaint` is called at all. Keep
-that split: nothing may leave the platform without an explicit approval.
-
-`submitComplaint` must report its channel honestly. `"simulated"` means nothing
-was actually sent, and the UI labels the result that way. Only return `"email"`
-or `"portal"` when a message really went out.
+The workflow runs analysis, authority selection, verified email lookup,
+requirements, complaint generation, email submission, and persistence as one
+operation. It must return a visible failure when an official email is missing
+or delivery fails; it must never invent an authority contact.
 
 ## Testing without the UI
 

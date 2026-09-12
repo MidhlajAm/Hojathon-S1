@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import AIAnalysisCard from "@/components/AIAnalysisCard";
 import AgentTimeline from "@/components/AgentTimeline";
-import ComplaintPreview from "@/components/ComplaintPreview";
 import ImageUploader from "@/components/ImageUploader";
 import IssuePhoto from "@/components/IssuePhoto";
 import LocationField from "@/components/LocationField";
@@ -12,9 +11,7 @@ import { CheckIcon } from "@/components/icons";
 import type {
   AnalyzeOutput,
   Authority,
-  ComplaintDraft,
   IssueAnalysis,
-  SubmissionResult,
 } from "@/lib/agent/types";
 import { formatDateTime } from "@/lib/format";
 import { DEFAULT_CENTER } from "@/lib/geo";
@@ -24,22 +21,26 @@ import { useAgentStream } from "@/lib/useAgentStream";
 /**
  * The §20 journey, on one page.
  *
- * capture → analysing → analysis → preparing → draft → submitting → submitted.
- * One timeline runs underneath the whole thing, accumulating steps across all
- * three agent calls, so the citizen sees a single continuous piece of work.
+ * capture → analysing → analysis → submitting → submitted.
  */
 
 type Phase =
   | "capture"
   | "analysing"
   | "analysis"
-  | "preparing"
-  | "draft"
   | "submitting"
   | "submitted";
 
-type PrepareResult = { authority: Authority; draft: ComplaintDraft };
-type SubmitResult = SubmissionResult & { issueId: string };
+type WorkflowResult = {
+  status: "submitted" | "failed" | "duplicate";
+  complaintId?: string;
+  recipientEmail?: string;
+  issueId?: string;
+  submittedAt?: string;
+  authority?: { authority: Authority };
+  error?: string;
+  submission?: { messageId?: string };
+};
 
 export default function ReportPage() {
   const [phase, setPhase] = useState<Phase>("capture");
@@ -49,10 +50,9 @@ export default function ReportPage() {
 
   const [analysis, setAnalysis] = useState<IssueAnalysis | null>(null);
   const [authority, setAuthority] = useState<Authority | null>(null);
-  const [draft, setDraft] = useState<ComplaintDraft | null>(null);
-  const [submission, setSubmission] = useState<SubmitResult | null>(null);
+  const [submission, setSubmission] = useState<WorkflowResult | null>(null);
 
-  const stream = useAgentStream<AnalyzeOutput | PrepareResult | SubmitResult>();
+  const stream = useAgentStream<AnalyzeOutput>();
   const place = location ?? DEFAULT_CENTER;
 
   async function analyse() {
@@ -68,58 +68,38 @@ export default function ReportPage() {
     if (!result) return;
 
     setAnalysis(result.analysis);
-    setPhase("analysis");
+    void submitAutomatically(result.analysis);
   }
 
-  async function prepare() {
-    if (!analysis) return;
-    setPhase("preparing");
-
-    const result = (await stream.run(
-      "/api/agent/submit",
-      {
-        phase: "prepare",
-        analysis,
-        location: place,
-        imageUrl,
-        description: description || undefined,
-      },
-      { keepSteps: true },
-    )) as PrepareResult | null;
-
-    if (!result) {
-      setPhase("analysis");
-      return;
-    }
-
-    setAuthority(result.authority);
-    setDraft(result.draft);
-    setPhase("draft");
-  }
-
-  async function submit() {
-    if (!draft || !analysis || !authority) return;
+  async function submitAutomatically(analysisForWorkflow = analysis) {
+    if (!analysisForWorkflow) return;
     setPhase("submitting");
-
-    const result = (await stream.run(
-      "/api/agent/submit",
-      {
-        phase: "submit",
-        draft,
-        authority,
-        analysis,
-        location: place,
+    const response = await fetch("/api/agent/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         imageUrl,
+        imageMimeType: "image/jpeg",
+        location: place,
         description: description || undefined,
-      },
-      { keepSteps: true },
-    )) as SubmitResult | null;
-
-    if (!result) {
-      setPhase("draft");
+      }),
+    });
+    const result = (await response.json()) as WorkflowResult & { authority?: { name: string } };
+    if (!response.ok || result.status === "failed") {
+      setPhase("analysis");
+      stream.reset();
       return;
     }
-
+    const selectedAuthority = result.authority?.authority;
+    setAuthority(selectedAuthority
+      ? {
+          id: selectedAuthority.id,
+          name: selectedAuthority.name,
+          department: selectedAuthority.department,
+          email: result.recipientEmail ?? "",
+          jurisdiction: selectedAuthority.jurisdiction,
+        }
+      : null);
     setSubmission(result);
     setPhase("submitted");
     // The success screen is short; without this the reader is left looking at
@@ -127,7 +107,7 @@ export default function ReportPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  const busy = phase === "analysing" || phase === "preparing" || phase === "submitting";
+  const busy = phase === "analysing" || phase === "submitting";
   const showTimeline = phase !== "capture";
 
   if (phase === "submitted" && submission) {
@@ -142,7 +122,7 @@ export default function ReportPage() {
         </h1>
         <p className="mt-1.5 max-w-[62ch] text-[15px] leading-6 text-muted">
           A photo and a place is all the agent needs. It works out the rest and
-          shows you the complaint before anything is sent.
+          submits the complaint automatically.
         </p>
       </header>
 
@@ -228,10 +208,10 @@ export default function ReportPage() {
                   <div className="flex flex-col gap-2 sm:flex-row-reverse">
                     <button
                       type="button"
-                      onClick={prepare}
+                      onClick={() => void submitAutomatically()}
                       className="rounded-lg bg-action px-5 py-2.5 text-[15px] font-semibold text-white hover:bg-action-ink"
                     >
-                      Find who fixes this
+                      Analyze, submit, and track automatically
                     </button>
                     <button
                       type="button"
@@ -272,20 +252,8 @@ export default function ReportPage() {
             </>
           ) : null}
 
-          {(phase === "draft" || phase === "submitting") && draft && analysis ? (
-            <>
-              <AIAnalysisCard
-                analysis={analysis}
-                location={place}
-                authority={authority ?? undefined}
-              />
-              <ComplaintPreview
-                draft={draft}
-                onChange={setDraft}
-                onConfirm={submit}
-                submitting={phase === "submitting"}
-              />
-            </>
+          {phase === "submitting" && analysis ? (
+            <AIAnalysisCard analysis={analysis} location={place} authority={authority ?? undefined} />
           ) : null}
 
           {busy ? (
@@ -304,7 +272,7 @@ function SubmittedScreen({
   analysis,
   authority,
 }: {
-  submission: SubmitResult;
+  submission: WorkflowResult;
   analysis: IssueAnalysis | null;
   authority: Authority | null;
 }) {
@@ -336,7 +304,7 @@ function SubmittedScreen({
           <div className="flex justify-between gap-4 border-b border-rule py-3">
             <dt className="text-muted">Submitted</dt>
             <dd className="text-right font-medium">
-              {formatDateTime(submission.submittedAt)}
+              {submission.submittedAt ? formatDateTime(submission.submittedAt) : "Processing"}
             </dd>
           </div>
           <div className="flex justify-between gap-4 py-3">
@@ -345,16 +313,10 @@ function SubmittedScreen({
           </div>
         </dl>
 
-        {submission.channel === "simulated" ? (
-          <p className="mt-4 rounded-lg bg-ground px-3 py-2 text-left text-[13px] leading-5 text-muted">
-            Demo submission. The complaint was recorded and can be tracked, but
-            no message was actually sent to the authority.
-          </p>
-        ) : null}
 
         <div className="mt-6 flex flex-col gap-2 sm:flex-row-reverse">
           <Link
-            href={`/issues/${submission.issueId}`}
+            href={submission.issueId ? `/issues/${submission.issueId}` : "/my-issues"}
             className="flex-1 rounded-lg bg-action px-5 py-2.5 text-center text-[15px] font-semibold text-white hover:bg-action-ink"
           >
             Track this issue
